@@ -1,0 +1,86 @@
+{
+  "protocol_version": "2025-11-05",
+  "orchestrator": "movilnet-semantic-router-v1",
+  "mcp_servers": [
+    {
+      "server_name": "mcp-funnel-rag",
+      "pillar": "PILAR_2_FUNNEL",
+      "tools": [
+        {
+          "name": "buscar_semantica_producto",
+          "description": "Busca productos en el catálogo vectorial de Qdrant filtrando estrictamente por el comercio activo y disponibilidad de stock.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "tenant_id": { "type": "string" },
+              "query_text": { "type": "string" },
+              "max_results": { "type": "integer", "default": 5 }
+            },
+            "required": ["tenant_id", "query_text"]
+          }
+        }
+      ]
+    },
+    {
+      "server_name": "mcp-erp-core",
+      "pillar": "PILAR_4_ERP",
+      "tools": [
+        {
+          "name": "reservar_item",
+          "description": "Bloquea temporalmente el stock de un SKU en PostgreSQL antes de ejecutar el cobro.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "tenant_id": { "type": "string" },
+              "sku": { "type": "string" },
+              "quantity": { "type": "integer" },
+              "msisdn": { "type": "string" }
+            },
+            "required": ["tenant_id", "sku", "quantity", "msisdn"]
+          }
+        }
+      ]
+    },
+    {
+      "server_name": "mcp-fintech-pay",
+      "pillar": "PILAR_5_FINTECH",
+      "tools": [
+        {
+          "name": "ejecutar_cobro_c2p",
+          "description": "Procesa el cobro por Pago Móvil C2P o billetera tras verificar Telco-ID y aplica la retención del Take-Rate de Movilnet.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "tenant_id": { "type": "string" },
+              "order_id": { "type": "string" },
+              "msisdn": { "type": "string" },
+              "amount_ves": { "type": "number" },
+              "bank_code": { "type": "string" },
+              "c2p_auth_token": { "type": "string" }
+            },
+            "required": ["tenant_id", "order_id", "msisdn", "amount_ves"]
+          }
+        }
+      ]
+    },
+    {
+      "server_name": "mcp-telco-loyalty",
+      "pillar": "PILAR_8_LOYALTY",
+      "tools": [
+        {
+          "name": "acreditar_megas_regalo",
+          "description": "Se conecta al nodo PCRF/OCS de Movilnet para inyectar un bono de datos libres en la línea del comprador.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "msisdn": { "type": "string" },
+              "sponsor_tenant_id": { "type": "string" },
+              "megabytes_reward": { "type": "integer", "default": 200 }
+            },
+            "required": ["msisdn", "sponsor_tenant_id", "megabytes_reward"]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "redis_session_example": {
+    "key_pattern": "msisdn:584161234567",
+    "ttl_seconds": 900,
+    "value": {
+      "msisdn": "584161234567",
+      "active_tenant_id": "tenant_farmacia_089",
+      "tenant_tier": "PLAN_CRECIMIENTO",
+      "current_pillar": "PILAR_2_FUNNEL",
+      "session_tunnel_stack": ["tenant_banco_002"],
+      "cart_items": [
+        { "sku": "MED-402", "qty": 2, "price_usd": 12.50 }
+      ],
+      "lbs_cell_id": "CCS-CHACAO-014",
+      "kyc_sim_swap_safe": true
+    }
+  },
+  "qdrant_collection_config": {
+    "collection_name": "catalog_master_vectors",
+    "vector_size": 1536,
+    "distance": "Cosine",
+    "payload_indexes": ["tenant_id", "in_stock", "geo_zone", "category"]
+  }
+}

@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  redis-state:
+    image: redis:7.2-alpine
+    container_name: superhub-redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+
+  postgres-core:
+    image: postgres:16-alpine
+    container_name: superhub-postgres
+    environment:
+      POSTGRES_USER: movilnet_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-superhub_secret_2026}
+      POSTGRES_DB: telco_superhub
+    volumes:
+      - ../database/schema-multitenant.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  qdrant-vectors:
+    image: qdrant/qdrant:latest
+    container_name: superhub-qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+
+  n8n-orchestrator:
+    image: n8nio/n8n:latest
+    container_name: superhub-n8n-mcp
+    environment:
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres-core
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_REDIS_HOST=redis-state
+    ports:
+      - "5678:5678"
+    depends_on:
+      - postgres-core
+      - redis-state
