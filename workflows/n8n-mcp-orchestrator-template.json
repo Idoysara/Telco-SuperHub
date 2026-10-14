@@ -1,0 +1,14 @@
+{
+  "name": "Movilnet Telco-SuperHub - Orquestador MCP (N <-> 1)",
+  "nodes": [
+    {
+      "parameters": { "httpMethod": "POST", "path": "superhub-inbound-rcs", "responseMode": "responseNode" },
+      "id": "1a2b3c4d-0001-4000-8000-000000000001",
+      "name": "Webhook RCS / PWA Gateway",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300]
+    }
+  ],
+  "connections": {}
+}
